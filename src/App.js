@@ -29,21 +29,30 @@ function App() {
   };
 
   const deleteAssignment = async (id) => {
+    // OPTIMISTIC UPDATE: Remove from screen immediately
+    const originalAssignments = [...assignments];
+    setAssignments(assignments.filter(a => a._id !== id));
+
     try {
       await axios.delete(`${API_URL}/${id}`);
-      setAssignments(assignments.filter(a => a._id !== id));
     } catch (error) {
-      console.error("Delete failed:", error);
+      console.error("Delete failed, rolling back:", error);
+      setAssignments(originalAssignments); // Undo if server fails
     }
   };
 
   const toggleComplete = async (assignment) => {
+    // OPTIMISTIC UPDATE: Toggle on screen immediately
+    const updatedData = { ...assignment, completed: !assignment.completed };
+    const originalAssignments = [...assignments];
+    
+    setAssignments(assignments.map(a => a._id === assignment._id ? updatedData : a));
+
     try {
-      const updatedData = { ...assignment, completed: !assignment.completed };
-      const response = await axios.put(`${API_URL}/${assignment._id}`, updatedData);
-      setAssignments(assignments.map(a => a._id === assignment._id ? response.data : a));
+      await axios.put(`${API_URL}/${assignment._id}`, updatedData);
     } catch (error) {
-      console.error("Update failed:", error);
+      console.error("Update failed, rolling back:", error);
+      setAssignments(originalAssignments); // Undo if server fails
     }
   };
 
@@ -60,7 +69,7 @@ function App() {
     }
   });
 
-  // 4. THE UI (The Face of the App)
+  // 4. THE UI
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-4xl mx-auto">
