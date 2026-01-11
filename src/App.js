@@ -7,11 +7,14 @@ function App() {
   const [assignments, setAssignments] = useState([]);
   const [sortBy, setSortBy] = useState('date'); 
 
+  // --- UPDATED API URL ---
+  const API_URL = 'https://deadline-dashboard.onrender.com/api/assignments';
+
   // 1. FETCH DATA
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        const response = await axios.get('http://localhost:5050/api/assignments');
+        const response = await axios.get(API_URL);
         setAssignments(response.data);
       } catch (error) {
         console.error("Error fetching assignments:", error);
@@ -27,7 +30,7 @@ function App() {
 
   const deleteAssignment = async (id) => {
     try {
-      await axios.delete(`http://localhost:5050/api/assignments/${id}`);
+      await axios.delete(`${API_URL}/${id}`);
       setAssignments(assignments.filter(a => a._id !== id));
     } catch (error) {
       console.error("Delete failed:", error);
@@ -37,7 +40,7 @@ function App() {
   const toggleComplete = async (assignment) => {
     try {
       const updatedData = { ...assignment, completed: !assignment.completed };
-      const response = await axios.put(`http://localhost:5050/api/assignments/${assignment._id}`, updatedData);
+      const response = await axios.put(`${API_URL}/${assignment._id}`, updatedData);
       setAssignments(assignments.map(a => a._id === assignment._id ? response.data : a));
     } catch (error) {
       console.error("Update failed:", error);
@@ -80,7 +83,6 @@ function App() {
         <AddAssignment onAddAssignment={addAssignment} />
         
         <div className="mt-8">
-          {/* SORT HEADER */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Your Assignments</h2>
             <div className="flex items-center gap-2">
@@ -96,7 +98,6 @@ function App() {
             </div>
           </div>
           
-          {/* LIST LOGIC */}
           {sortedAssignments.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl shadow-inner border-2 border-dashed">
               <p className="text-4xl mb-4">🎉</p>
