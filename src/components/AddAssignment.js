@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios'; // 1. Added this import
+import axios from 'axios';
 
 function AddAssignment({ onAddAssignment }) {
   const [title, setTitle] = useState('');
@@ -8,7 +8,9 @@ function AddAssignment({ onAddAssignment }) {
   const [estimatedHours, setEstimatedHours] = useState('');
   const [priority, setPriority] = useState('medium');
 
-  // 2. Added 'async' here because talking to a server takes time
+  // --- UPDATED API URL ---
+  const API_URL = 'https://deadline-dashboard.onrender.com/api/assignments';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -22,11 +24,9 @@ function AddAssignment({ onAddAssignment }) {
     };
 
     try {
-      // 3. POST = "Add". We send the data to your server on port 5050
-      const response = await axios.post('http://localhost:5050/api/assignments', newAssignment);
+      // Use the live API_URL here instead of localhost
+      const response = await axios.post(API_URL, newAssignment);
       
-      // 4. If successful, the server sends back the assignment (now with an ID)
-      // We pass THAT to the main App so it shows up on the screen
       onAddAssignment(response.data);
 
       // Clear the form
@@ -39,7 +39,8 @@ function AddAssignment({ onAddAssignment }) {
       console.log("Success! Server saved the data.");
     } catch (error) {
       console.error("Error saving to server:", error);
-      alert("Make sure your server is running on port 5050!");
+      // Updated the alert message so it's more accurate for a live app
+      alert("Wait a second! The server might be waking up. Try again in 30 seconds.");
     }
   };
 
