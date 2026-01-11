@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // 1. DATABASE CONNECTION
-const mongoURI = "mongodb+srv://lisey04_db:Onl!nepw08@deadlineproject.tlydyso.mongodb.net/deadlineDB?retryWrites=true&w=majority";
+const mongoURI = "mongodb+srv://lisey04_db:Lisey2026@deadlineproject.tlydyso.mongodb.net/deadlineDB?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI)
   .then(() => console.log("--- SUCCESS: CONNECTED TO MONGODB ATLAS ---"))
